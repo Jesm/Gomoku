@@ -12,6 +12,7 @@ public class App extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
 	private AppStatus status;
+	private Hub hub;
 	
 	private static int padding=20;
 	private static int lineNumber=19;
@@ -25,6 +26,7 @@ public class App extends JFrame {
 	public App(){
 		this.status=AppStatus.STARTED;
 		this.createGameEnvironment();
+		this.hub=Hub.getInstance();
 	}
 	
 	private App createGameMenu(){
