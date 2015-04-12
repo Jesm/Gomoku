@@ -1,73 +1,103 @@
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.geom.Line2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
-public class App extends JFrame {
-	
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class App extends JFrame implements ActionListener {	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private AppStatus status;
-	private Hub hub;
+	public static Dimension dimension;
+	public static int padding=20;
+
+	public static Color bgColor;
 	
-	private static int padding=20;
-	private static int lineNumber=19;
-	private static int rockWidth=20;
-	private static int rockMargin=3;
+	public static int lineNumber=19;
+	public static int rockWidth=20;
+	public static int rockMargin=3;
+	public static Color hostRockColor;
+	public static Color guestRockColor;
 	
 	public static void main(String args[]){
+		App.dimension=new Dimension(500, 540);
+		App.bgColor=new Color(255, 255, 255);
+		App.hostRockColor=new Color(255, 0, 0);
+		App.guestRockColor=new Color(0, 0, 255);
+		
 		new App();
 	}
 	
+
+	private AppStatus status;
+	private Hub hub;
+	
+	private JPanel menu;
+	private JTextField inputCOMPort;
+	private JPanel board;
+	
 	public App(){
 		this.status=AppStatus.STARTED;
-		this.createGameEnvironment();
 		this.hub=Hub.getInstance();
-	}
-	
-	private App createGameMenu(){
 		
-		return this;
-	}
-	
-	private App createGameEnvironment(){
-		this.setTitle("Gomoku");
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		this.setLayout(null);
-		
-		
-//		this.getContentPane().add(f);
-		Dimension screenSize=java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension appSize=new Dimension(500, 540);		
-		this.setBounds((screenSize.width-appSize.width)/2, (screenSize.height-appSize.height)/2, appSize.width, appSize.height);
+		this.createGameEnvironment();
+		this.createGameMenu();
 		
 		this.setVisible(true);
-		
-		return this;
 	}
 	
-	public void paint(Graphics g){
-		Graphics2D g2=(Graphics2D)g;
+	private void createGameEnvironment(){
+		this.setTitle("Gomoku");
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.setLayout(null);
 		
-		int rhs=(App.rockMargin+App.rockWidth)/2,
-		size=rhs*2*(App.lineNumber+1),
-		left=App.padding+rhs,
-		top=20+App.padding+rhs;
-		
-		for(int x=0;x<App.lineNumber;x++){
-			int num=(x+1)*rhs*2;
-			this.drawLine(g2, left, num+top, left+size, num+top);
-			this.drawLine(g2, num+left, top, num+left, top+size);
-		}
+		Dimension screenSize=java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		this.setBounds(
+			(screenSize.width-App.dimension.width)/2,
+			(screenSize.height-App.dimension.height)/2,
+			App.dimension.width,
+			App.dimension.height
+		);
 	}
 	
-	private void drawLine(Graphics2D g, int startX, int startY, int endX, int EndY){
-		Line2D lin = new Line2D.Float(startX, startY, endX, EndY);
-		g.draw(lin);
+	private void createGameMenu(){
+		this.menu=new JPanel();
+//		this.menu.setLayout(null);
+		this.menu.setBackground(App.bgColor);
+		this.menu.setBounds(0, 0, App.dimension.width, App.dimension.height);
+		
+		JLabel label=new JLabel("Insira a porta COM que deseja utilizar:");
+		this.menu.add(label);
+
+		this.inputCOMPort=new JTextField();
+		this.inputCOMPort.setColumns(10);
+		this.menu.add(this.inputCOMPort);
+		
+		JButton button=new JButton("Usar porta COM");
+		button.addActionListener(this);
+		this.menu.add(button);
+		
+		this.getContentPane().add(this.menu);
 	}
-	
+
+	private void createGameBoard(){
+		this.board=new AppBoard();
+		this.board.setBounds(0, 0, App.dimension.width, App.dimension.height);
+		this.add(this.board);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		this.menu.setVisible(false);
+		System.out.println(this.inputCOMPort.getText());
+		this.createGameBoard();
+	}
 }
