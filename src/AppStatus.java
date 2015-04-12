@@ -1,6 +1,6 @@
 
 public enum AppStatus {
-	STARTED(0), READY(1), WAITING(2);
+	INITIALIZED(0), READY(1), PLAYING(2), WAITING(3);
 	
 	private final int value;
 	

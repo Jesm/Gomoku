@@ -28,7 +28,7 @@ public class App extends JFrame implements ActionListener {
 	
 	public static void main(String args[]){
 		int base=(App.boardOrder+1)*(App.rockWidth+App.rockMargin*2)+App.boardOrder;
-		App.dimension=new Dimension(base, base+App.messageBoxHeight);
+		App.dimension=new Dimension(base, base);
 		
 		App.hostRockColor=new Color(255, 0, 0);
 		App.guestRockColor=new Color(0, 0, 255);
@@ -40,17 +40,20 @@ public class App extends JFrame implements ActionListener {
 	private AppStatus status;
 	private Hub hub;
 	
+	private JLabel messageBox;
 	private JPanel menu;
 	private JTextField inputCOMPort;
+	private JPanel startGame;
 	private JPanel board;
 	
 	public App(){
-		this.status=AppStatus.STARTED;
+		this.status=AppStatus.INITIALIZED;
 		this.hub=Hub.getInstance();
 		
 		
 		
 		this.createGameEnvironment();
+		this.setMessage("Insira a porta COM que deseja utilizar");
 		this.createGameMenu();
 		
 		this.setVisible(true);
@@ -62,18 +65,23 @@ public class App extends JFrame implements ActionListener {
 		this.setLayout(null);
 		
 		Dimension screenSize=java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-		Dimension base=new Dimension(App.dimension.width+App.padding*2, App.dimension.height+App.padding*2);
+		Dimension base=new Dimension(App.dimension.width+App.padding*2, App.dimension.height+App.padding*2+App.messageBoxHeight+20);
 		this.setBounds((screenSize.width-base.width)/2, (screenSize.height-base.height)/2, base.width, base.height);
+		
+		this.messageBox=new JLabel();
+		this.messageBox.setBounds(App.padding, App.padding, App.dimension.width, App.messageBoxHeight);
+		this.getContentPane().add(this.messageBox);
+	}
+	
+	private void setMessage(String str){
+		this.messageBox.setText(str);
 	}
 	
 	private void createGameMenu(){
 		this.menu=new JPanel();
 //		this.menu.setLayout(null);
-		this.menu.setLocation(App.padding, App.padding);
+		this.menu.setLocation(App.padding, App.padding+App.messageBoxHeight);
 		this.menu.setSize(App.dimension);
-		
-		JLabel label=new JLabel("Insira a porta COM que deseja utilizar:");
-		this.menu.add(label);
 
 		this.inputCOMPort=new JTextField();
 		this.inputCOMPort.setColumns(10);
@@ -84,19 +92,47 @@ public class App extends JFrame implements ActionListener {
 		this.menu.add(button);
 		
 		this.getContentPane().add(this.menu);
+		
+		this.startGame=new JPanel();
+		this.startGame.setLocation(App.padding, App.padding+App.messageBoxHeight);
+		this.startGame.setSize(App.dimension);
+		
+		button=new JButton("Iniciar jogo");
+		button.addActionListener(this);
+		this.startGame.add(button);		
+		
+		this.startGame.setVisible(false);
+		this.getContentPane().add(this.startGame);
+		
+		
 	}
 
 	private void createGameBoard(){
 		this.board=new AppBoard();
-		this.board.setLocation(App.padding, App.padding);
+		this.board.setLocation(App.padding, App.padding+App.messageBoxHeight);
 		this.board.setSize(App.dimension);
 		this.getContentPane().add(this.board);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		this.menu.setVisible(false);
-		System.out.println(this.inputCOMPort.getText());
-		this.createGameBoard();
+		switch(this.status){
+			case INITIALIZED:
+				
+				this.status=AppStatus.READY;
+				this.setMessage("Inicie o jogo clicando no botao abaixo ou aguarde um convite");
+				this.menu.setVisible(false);
+//				System.out.println(this.inputCOMPort.getText());
+				this.startGame.setVisible(true);
+				
+			break;
+			case READY:
+				
+				this.menu.setVisible(false);
+				System.out.println(this.inputCOMPort.getText());
+				this.createGameBoard();
+				
+			break;
+		}
 	}
 }
