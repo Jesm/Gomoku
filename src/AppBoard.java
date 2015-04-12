@@ -17,15 +17,13 @@ public class AppBoard extends JPanel{
 		super.paint(g);		
 		Graphics2D g2=(Graphics2D)g;
 		
-		int rhs=App.rockMargin+App.rockWidth/2,
-		size=rhs*2*(App.lineNumber+1),
-		left=App.padding+rhs,
-		top=App.padding+rhs;
+		int squareSize=App.rockMargin*2+App.rockWidth,
+		size=squareSize*(App.boardOrder+1);
 		
-		for(int x=0;x<App.lineNumber;x++){
-			int num=(x+1)*rhs*2;
-			this.drawLine(g2, left, num+top, left+size, num+top);
-			this.drawLine(g2, num+left, top, num+left, top+size);
+		for(int x=1;x<=App.boardOrder;x++){
+			int num=x*squareSize;
+			this.drawLine(g2, 0, num, size, num);
+			this.drawLine(g2, num, 0, num, size);
 		}
 	}
 	

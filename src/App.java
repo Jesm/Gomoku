@@ -18,18 +18,18 @@ public class App extends JFrame implements ActionListener {
 	
 	public static Dimension dimension;
 	public static int padding=20;
-
-	public static Color bgColor;
+	public static int messageBoxHeight=40;
 	
-	public static int lineNumber=19;
-	public static int rockWidth=20;
-	public static int rockMargin=3;
+	public static int boardOrder=19;
+	public static int rockMargin=4;
+	public static int rockWidth=16;
 	public static Color hostRockColor;
 	public static Color guestRockColor;
 	
 	public static void main(String args[]){
-		App.dimension=new Dimension(500, 540);
-		App.bgColor=new Color(255, 255, 255);
+		int base=(App.boardOrder+1)*(App.rockWidth+App.rockMargin*2)+App.boardOrder;
+		App.dimension=new Dimension(base, base+App.messageBoxHeight);
+		
 		App.hostRockColor=new Color(255, 0, 0);
 		App.guestRockColor=new Color(0, 0, 255);
 		
@@ -48,6 +48,8 @@ public class App extends JFrame implements ActionListener {
 		this.status=AppStatus.STARTED;
 		this.hub=Hub.getInstance();
 		
+		
+		
 		this.createGameEnvironment();
 		this.createGameMenu();
 		
@@ -60,19 +62,15 @@ public class App extends JFrame implements ActionListener {
 		this.setLayout(null);
 		
 		Dimension screenSize=java.awt.Toolkit.getDefaultToolkit().getScreenSize();
-		this.setBounds(
-			(screenSize.width-App.dimension.width)/2,
-			(screenSize.height-App.dimension.height)/2,
-			App.dimension.width,
-			App.dimension.height
-		);
+		Dimension base=new Dimension(App.dimension.width+App.padding*2, App.dimension.height+App.padding*2);
+		this.setBounds((screenSize.width-base.width)/2, (screenSize.height-base.height)/2, base.width, base.height);
 	}
 	
 	private void createGameMenu(){
 		this.menu=new JPanel();
 //		this.menu.setLayout(null);
-		this.menu.setBackground(App.bgColor);
-		this.menu.setBounds(0, 0, App.dimension.width, App.dimension.height);
+		this.menu.setLocation(App.padding, App.padding);
+		this.menu.setSize(App.dimension);
 		
 		JLabel label=new JLabel("Insira a porta COM que deseja utilizar:");
 		this.menu.add(label);
@@ -90,8 +88,9 @@ public class App extends JFrame implements ActionListener {
 
 	private void createGameBoard(){
 		this.board=new AppBoard();
-		this.board.setBounds(0, 0, App.dimension.width, App.dimension.height);
-		this.add(this.board);
+		this.board.setLocation(App.padding, App.padding);
+		this.board.setSize(App.dimension);
+		this.getContentPane().add(this.board);
 	}
 
 	@Override
