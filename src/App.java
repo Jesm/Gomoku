@@ -34,6 +34,7 @@ public class App extends JFrame implements ActionListener {
 		App.guestRockColor=new Color(0, 0, 255);
 		
 		new App();
+		new App();
 	}
 	
 
@@ -49,9 +50,7 @@ public class App extends JFrame implements ActionListener {
 	public App(){
 		this.status=AppStatus.INITIALIZED;
 		this.hub=Hub.getInstance();
-		
-		
-		
+
 		this.createGameEnvironment();
 		this.setMessage("Insira a porta COM que deseja utilizar");
 		this.createGameMenu();
@@ -107,32 +106,76 @@ public class App extends JFrame implements ActionListener {
 		
 	}
 
-	private void createGameBoard(){
-		this.board=new AppBoard();
-		this.board.setLocation(App.padding, App.padding+App.messageBoxHeight);
-		this.board.setSize(App.dimension);
-		this.getContentPane().add(this.board);
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch(this.status){
 			case INITIALIZED:
-				
-				this.status=AppStatus.READY;
-				this.setMessage("Inicie o jogo clicando no botao abaixo ou aguarde um convite");
-				this.menu.setVisible(false);
-//				System.out.println(this.inputCOMPort.getText());
-				this.startGame.setVisible(true);
-				
+				this.preparePort();
 			break;
 			case READY:
-				
-				this.menu.setVisible(false);
-				System.out.println(this.inputCOMPort.getText());
-				this.createGameBoard();
-				
+				this.searchGame();
+			break;
+			case INVITED:				
+				this.acceptInvite();
 			break;
 		}
 	}
+	
+	private void preparePort(){
+		this.hub.registerPort(this.inputCOMPort.getText(), this);
+		this.status=AppStatus.READY;
+		
+		this.menu.setVisible(false);
+		this.startGame.setVisible(true);
+		this.setMessage("Procure um jogo clicando no botao abaixo ou aguarde um convite");
+	}
+	
+	private void sendHubCommand(String str){
+		HubCommand cmd=new HubCommand(str);
+		this.hub.sendCommand(this, cmd);
+	}
+	
+	private void searchGame(){
+		this.sendHubCommand("invite");
+		this.setMessage("Foi enviado um pedido de jogo");
+	}
+	
+	public void receiveCommand(HubCommand cmd){
+		switch(cmd.getName()){
+			case "invite":
+				this.setInvite();
+			break;
+			case "accepted_invite":
+				this.getAcceptedInvite();
+			break;
+		}
+	}
+	
+	public void setInvite(){
+		this.status=AppStatus.INVITED;
+		this.setMessage("Você foi convidado para uma partida! Clique no botao abaixo para jogar");
+	}
+	
+	public void acceptInvite(){
+		this.sendHubCommand("accepted_invite");
+		this.status=AppStatus.PLAYING;
+		this.generateGameBoard();
+		this.setMessage("O jogo comecou! Faca seu primeiro movimento clicando em uma das posicoes abaixo");
+	}
+	
+	public void getAcceptedInvite(){
+		this.status=AppStatus.WAITING;
+		this.generateGameBoard();
+		this.setMessage("Foi encontrado um jogo! Aguarde pelo movimento de seu oponente");
+	}
+
+	private void generateGameBoard(){
+		this.board=new AppBoard();
+		this.board.setLocation(App.padding, App.padding+App.messageBoxHeight);
+		this.board.setSize(App.dimension);
+		this.getContentPane().add(this.board);
+		
+		this.startGame.setVisible(false);
+	}
+	
 }
