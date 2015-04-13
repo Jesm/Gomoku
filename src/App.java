@@ -22,14 +22,18 @@ public class App extends JFrame implements ActionListener {
 	
 	public static int boardOrder=19;
 	public static int rockMargin=4;
-	public static int rockWidth=16;
+	public static int rockDiameter=16;
+	public static Color lineColor;
+	public static Color rockColor;
 	public static Color hostRockColor;
 	public static Color guestRockColor;
 	
 	public static void main(String args[]){
-		int base=(App.boardOrder+1)*(App.rockWidth+App.rockMargin*2)+App.boardOrder;
+		int base=(App.boardOrder+1)*(App.rockDiameter+App.rockMargin*2)+App.boardOrder;
 		App.dimension=new Dimension(base, base);
-		
+
+		App.lineColor=new Color(48, 48, 48);
+		App.rockColor=new Color(255, 255, 255);
 		App.hostRockColor=new Color(255, 0, 0);
 		App.guestRockColor=new Color(0, 0, 255);
 		
