@@ -1,12 +1,14 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 
 import javax.swing.JPanel;
 
 
-public class AppBoard extends JPanel{
+public class AppBoard extends JPanel implements MouseListener{
 	
 
 	/**
@@ -15,6 +17,13 @@ public class AppBoard extends JPanel{
 	private static final long serialVersionUID = 1L;
 	
 	private Graphics2D g2;
+	private App app;
+	private AppCircle[][] boardRepresentation;
+	
+	public AppBoard(App app){
+		this.app=app;
+		this.boardRepresentation=new AppCircle[App.boardOrder][App.boardOrder];
+	}
 
 	public void paint(Graphics g){
 		super.paint(g);		
@@ -34,7 +43,9 @@ public class AppBoard extends JPanel{
 		this.g2.setColor(App.rockColor);
 		for(int x=0;x<App.boardOrder;x++)
 			for(int y=0;y<App.boardOrder;y++)
-				this.drawCircle(x, y);
+				this.drawCircle(x, y);		
+
+		this.addMouseListener(this);
 		
 	}
 	
@@ -45,8 +56,55 @@ public class AppBoard extends JPanel{
 	
 	private void drawCircle(int x, int y){
 		int dist=App.rockMargin*2+App.rockDiameter, baseDist=dist-App.rockDiameter/2;
-		Ellipse2D.Double c=new AppCircle(x*dist+baseDist, y*dist+baseDist, App.rockDiameter);
+		AppCircle c=new AppCircle(x*dist+baseDist, y*dist+baseDist, App.rockDiameter);
+		this.boardRepresentation[x][y]=c;
 		this.g2.draw(c);
 		this.g2.fill(c);
 	}
+	
+	public AppCircle[][] getBoardRepresentation(){
+		return this.boardRepresentation;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(this.app.getStatus()!=AppStatus.PLAYING)
+			return;
+		
+		for(int x=0, posX=e.getX(), posY=e.getY();x<App.boardOrder;x++){
+			for(int y=0;y<App.boardOrder;y++){
+				AppCircle c=this.boardRepresentation[x][y];
+				if(c.belongsToPlayer==0&&c.contains(posX, posY)){
+					this.app.setMarkedCircle(c);
+					return;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 }

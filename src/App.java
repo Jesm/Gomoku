@@ -44,12 +44,15 @@ public class App extends JFrame implements ActionListener {
 
 	private AppStatus status;
 	private Hub hub;
+	private AppBoard board;
+	private AppCircle[][] boardRepresentation;
+	private Color color, opColor;
 	
 	private JLabel messageBox;
 	private JPanel menu;
 	private JTextField inputCOMPort;
 	private JPanel startGame;
-	private JPanel board;
+
 	
 	public App(){
 		this.status=AppStatus.INITIALIZED;
@@ -60,6 +63,10 @@ public class App extends JFrame implements ActionListener {
 		this.createGameMenu();
 		
 		this.setVisible(true);
+	}
+	
+	public AppStatus getStatus(){
+		return this.status;
 	}
 	
 	private void createGameEnvironment(){
@@ -163,23 +170,65 @@ public class App extends JFrame implements ActionListener {
 	public void acceptInvite(){
 		this.sendHubCommand("accepted_invite");
 		this.status=AppStatus.PLAYING;
+		this.color=App.guestRockColor;
+		this.opColor=App.hostRockColor;
 		this.generateGameBoard();
 		this.setMessage("O jogo comecou! Faca seu primeiro movimento clicando em uma das posicoes abaixo");
 	}
 	
 	public void getAcceptedInvite(){
 		this.status=AppStatus.WAITING;
+		this.color=App.hostRockColor;
+		this.opColor=App.guestRockColor;
 		this.generateGameBoard();
 		this.setMessage("Foi encontrado um jogo! Aguarde pelo movimento de seu oponente");
 	}
 
 	private void generateGameBoard(){
-		this.board=new AppBoard();
+
+		this.board=new AppBoard(this);
 		this.board.setLocation(App.padding, App.padding+App.messageBoxHeight);
 		this.board.setSize(App.dimension);
 		this.getContentPane().add(this.board);
 		
+		this.boardRepresentation=this.board.getBoardRepresentation();
+		
 		this.startGame.setVisible(false);
+	}
+	
+	public void setMarkedCircle(AppCircle c){
+		c.belongsToPlayer=1;
+		c.setColor(this.color);
+//		TODO: send to opponent
+		if(this.verifyRockSequence(c, true)){
+			this.endGame(true);
+			return;
+		}
+		
+		this.status=AppStatus.WAITING;
+		this.setMessage("Aguardando jogada do oponente...");
+	}
+	
+	public void getOpMove(int x, int y){
+		AppCircle c=this.boardRepresentation[x][y];
+		c.belongsToPlayer=-1;
+		c.setColor(this.opColor);
+		if(this.verifyRockSequence(c, false)){
+			this.endGame(false);
+			return;
+		}
+		
+		this.status=AppStatus.PLAYING;
+		this.setMessage("Faca sua jogada");
+	}
+	
+	private boolean verifyRockSequence(AppCircle c, boolean b){
+//		TODO: implementar verificacao
+		return false;
+	}
+	
+	private void endGame(boolean b){
+//		TODO: mostar mensagem do fim do jogo
 	}
 	
 }
