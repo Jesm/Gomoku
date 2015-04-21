@@ -45,8 +45,7 @@ public class App extends JFrame implements ActionListener {
 	private AppStatus status;
 	private Hub hub;
 	private AppBoard board;
-	private AppCircle[][] boardRepresentation;
-	private Color color, opColor;
+	public Color color, opColor;
 	
 	private JLabel messageBox;
 	private JPanel menu;
@@ -191,16 +190,13 @@ public class App extends JFrame implements ActionListener {
 		this.board.setSize(App.dimension);
 		this.getContentPane().add(this.board);
 		
-		this.boardRepresentation=this.board.getBoardRepresentation();
-		
 		this.startGame.setVisible(false);
 	}
 	
-	public void setMarkedCircle(AppCircle c){
-		c.belongsToPlayer=1;
-		c.setColor(this.color);
+	
+	public void getPlayerMove(int x, int y){
 //		TODO: send to opponent
-		if(this.verifyRockSequence(c, true)){
+		if(this.board.setPlayerRock(x, y, 1)){
 			this.endGame(true);
 			return;
 		}
@@ -209,22 +205,14 @@ public class App extends JFrame implements ActionListener {
 		this.setMessage("Aguardando jogada do oponente...");
 	}
 	
-	public void getOpMove(int x, int y){
-		AppCircle c=this.boardRepresentation[x][y];
-		c.belongsToPlayer=-1;
-		c.setColor(this.opColor);
-		if(this.verifyRockSequence(c, false)){
+	public void getOpponentMove(int x, int y){
+		if(this.board.setPlayerRock(x, y, -1)){
 			this.endGame(false);
 			return;
 		}
 		
 		this.status=AppStatus.PLAYING;
 		this.setMessage("Faca sua jogada");
-	}
-	
-	private boolean verifyRockSequence(AppCircle c, boolean b){
-//		TODO: implementar verificacao
-		return false;
 	}
 	
 	private void endGame(boolean b){

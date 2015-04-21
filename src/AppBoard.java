@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -16,55 +17,72 @@ public class AppBoard extends JPanel implements MouseListener{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Graphics2D g2;
 	private App app;
 	private AppCircle[][] boardRepresentation;
 	
 	public AppBoard(App app){
 		this.app=app;
 		this.boardRepresentation=new AppCircle[App.boardOrder][App.boardOrder];
-	}
 
-	public void paint(Graphics g){
-		super.paint(g);		
-		this.g2=(Graphics2D)g;
+		for(int x=0;x<App.boardOrder;x++){
+			for(int y=0;y<App.boardOrder;y++){
+				int dist=App.rockMargin*2+App.rockDiameter, baseDist=dist-App.rockDiameter/2;
+				this.boardRepresentation[x][y]=new AppCircle(this, x*dist+baseDist, y*dist+baseDist, App.rockDiameter);
+			}
+		}
+
+		this.addMouseListener(this);
+	}
+	
+	public boolean setPlayerRock(int x, int y, int code){
+		AppCircle c=this.boardRepresentation[x][y];
+		c.belongCode=code;
 		
+		this.validate();
+		this.repaint();
+		
+		return this.verifyRockSequence(c, code);
+	}
+	
+	private boolean verifyRockSequence(AppCircle c, int code){
+//		TODO: implementar verificacao
+		return false;
+	}
+	
+	public Color getColor(int code){
+		switch(code){
+			case 1:
+				return this.app.color;
+			case -1:
+				return this.app.opColor;
+		}
+		
+		return null;
+	}
+	
+	public void paint(Graphics g){
+		super.paint(g);
+		Graphics2D g2d=(Graphics2D)g;	
+
 		int squareSize=App.rockMargin*2+App.rockDiameter,
 		size=squareSize*(App.boardOrder+1);
 
-		this.g2.setColor(App.lineColor);
+		g2d.setColor(App.lineColor);
 		for(int x=1;x<=App.boardOrder;x++){
 			int num=x*squareSize;
-			this.drawLine(0, num, size, num);
-			this.drawLine(num, 0, num, size);
+			Line2D lin = new Line2D.Float(0, num, size, num);
+			g2d.draw(lin);
+			lin = new Line2D.Float(num, 0, num, size);
+			g2d.draw(lin);
 			
 		}
 
-		this.g2.setColor(App.rockColor);
-		for(int x=0;x<App.boardOrder;x++)
+		for(int x=0;x<App.boardOrder;x++){
 			for(int y=0;y<App.boardOrder;y++)
-				this.drawCircle(x, y);		
-
-		this.addMouseListener(this);
-		
+				this.boardRepresentation[x][y].paint(g2d);
+		}
 	}
 	
-	private void drawLine(int startX, int startY, int endX, int EndY){
-		Line2D lin = new Line2D.Float(startX, startY, endX, EndY);
-		this.g2.draw(lin);
-	}
-	
-	private void drawCircle(int x, int y){
-		int dist=App.rockMargin*2+App.rockDiameter, baseDist=dist-App.rockDiameter/2;
-		AppCircle c=new AppCircle(x*dist+baseDist, y*dist+baseDist, App.rockDiameter);
-		this.boardRepresentation[x][y]=c;
-		this.g2.draw(c);
-		this.g2.fill(c);
-	}
-	
-	public AppCircle[][] getBoardRepresentation(){
-		return this.boardRepresentation;
-	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -74,8 +92,8 @@ public class AppBoard extends JPanel implements MouseListener{
 		for(int x=0, posX=e.getX(), posY=e.getY();x<App.boardOrder;x++){
 			for(int y=0;y<App.boardOrder;y++){
 				AppCircle c=this.boardRepresentation[x][y];
-				if(c.belongsToPlayer==0&&c.contains(posX, posY)){
-					this.app.setMarkedCircle(c);
+				if(c.gotClicked(posX, posY)){
+					this.app.getPlayerMove(x, y);
 					return;
 				}
 			}
