@@ -28,17 +28,14 @@ public class AppCircle{
 			case 0:
 				return App.rockColor;
 			default:
-				this.board.getColor(this.belongCode);
+				return this.board.getColor(this.belongCode);
 		}
-		
-		return null;
 	}
 
 	public void paint(Graphics2D g) {
 		g.setColor(this.getColor());
 		this.ellipse=new Ellipse2D.Double(this.x, this.y, this.d, this.d);
-		g.draw(this.ellipse);
 		g.fill(this.ellipse);
-		
+		g.draw(this.ellipse);		
 	}
 }

@@ -33,9 +33,9 @@ public class App extends JFrame implements ActionListener {
 		App.dimension=new Dimension(base, base);
 
 		App.lineColor=new Color(48, 48, 48);
-		App.rockColor=new Color(255, 255, 255);
-		App.hostRockColor=new Color(255, 0, 0);
-		App.guestRockColor=new Color(0, 0, 255);
+		App.rockColor=new Color(255, 255, 255, 240);
+		App.hostRockColor=Color.RED;
+		App.guestRockColor=Color.BLUE;
 		
 		new App();
 		new App();
@@ -158,6 +158,10 @@ public class App extends JFrame implements ActionListener {
 			case "accepted_invite":
 				this.getAcceptedInvite();
 			break;
+			case "move":
+				HubMoveCommand tmp=(HubMoveCommand)cmd;
+				this.getOpponentMove(tmp.x, tmp.y);
+			break;
 		}
 	}
 	
@@ -195,7 +199,9 @@ public class App extends JFrame implements ActionListener {
 	
 	
 	public void getPlayerMove(int x, int y){
-//		TODO: send to opponent
+		HubMoveCommand cmd=new HubMoveCommand("move", x, y);
+		this.hub.sendCommand(this, cmd);
+		
 		if(this.board.setPlayerRock(x, y, 1)){
 			this.endGame(true);
 			return;

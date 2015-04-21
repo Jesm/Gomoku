@@ -60,8 +60,9 @@ public class AppBoard extends JPanel implements MouseListener{
 		return null;
 	}
 	
-	public void paint(Graphics g){
-		super.paint(g);
+	@Override
+	public void paintComponent(Graphics g){
+		super.paintComponent(g);
 		Graphics2D g2d=(Graphics2D)g;	
 
 		int squareSize=App.rockMargin*2+App.rockDiameter,
