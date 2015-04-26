@@ -9,7 +9,7 @@ public class AppCircle{
 	
 	private AppBoard board;
 	private Ellipse2D.Double ellipse;
-	private int x, y, d;
+	public int x, y, d;
 	
 	public AppCircle(AppBoard b, int x, int y, int diam){
 		this.board=b;
@@ -32,9 +32,9 @@ public class AppCircle{
 		}
 	}
 
-	public void paint(Graphics2D g) {
+	public void paint(Graphics2D g, int multi, int adder) {
 		g.setColor(this.getColor());
-		this.ellipse=new Ellipse2D.Double(this.x, this.y, this.d, this.d);
+		this.ellipse=new Ellipse2D.Double(this.x*multi+adder, this.y*multi+adder, this.d, this.d);
 		g.fill(this.ellipse);
 		g.draw(this.ellipse);		
 	}

@@ -112,8 +112,6 @@ public class App extends JFrame implements ActionListener {
 		
 		this.startGame.setVisible(false);
 		this.getContentPane().add(this.startGame);
-		
-		
 	}
 
 	@Override
@@ -222,7 +220,9 @@ public class App extends JFrame implements ActionListener {
 	}
 	
 	private void endGame(boolean b){
-//		TODO: mostar mensagem do fim do jogo
+		this.status=AppStatus.PLAYING;
+		this.setMessage(b?"Voce venceu, parabens!":"Voce perdeu!");
+		this.messageBox.setForeground(b?Color.GREEN:Color.RED);
 	}
 	
 }
