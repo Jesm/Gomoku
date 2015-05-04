@@ -2,10 +2,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -49,7 +52,9 @@ public class App extends JFrame implements ActionListener {
 	
 	private JLabel messageBox;
 	private JPanel menu;
-	private JTextField inputCOMPort;
+//	private JTextField inputCOMPort;
+	private JComboBox<String> comList;
+	private String selectedCom;
 	private JPanel startGame;
 
 	
@@ -92,13 +97,27 @@ public class App extends JFrame implements ActionListener {
 		this.menu.setLocation(App.padding, App.padding+App.messageBoxHeight);
 		this.menu.setSize(App.dimension);
 
-		this.inputCOMPort=new JTextField();
-		this.inputCOMPort.setColumns(10);
-		this.menu.add(this.inputCOMPort);
+		String[] com = {"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8"}; 
+		comList = new JComboBox<>(com);
+		this.menu.add(comList);	
+		
+//		this.inputCOMPort=new JTextField();
+//		this.inputCOMPort.setColumns(10);
+//		this.menu.add(this.inputCOMPort);
 		
 		JButton button=new JButton("Usar porta COM");
 		button.addActionListener(this);
 		this.menu.add(button);
+		
+		
+		// Pega a com selecionada e joga na variavel selectedcom
+		button.addActionListener(new ActionListener() {
+			 
+            public void actionPerformed(ActionEvent e)
+            {
+                selectedCom = (String)(comList.getSelectedItem());
+            }
+        });     
 		
 		this.getContentPane().add(this.menu);
 		
@@ -130,7 +149,9 @@ public class App extends JFrame implements ActionListener {
 	}
 	
 	private void preparePort(){
-		this.hub.registerPort(this.inputCOMPort.getText(), this);
+//		this.hub.registerPort(this.inputCOMPort.getText(), this);
+		System.out.println(selectedCom);
+		this.hub.registerPort(selectedCom, this);
 		this.status=AppStatus.READY;
 		
 		this.menu.setVisible(false);
@@ -223,6 +244,7 @@ public class App extends JFrame implements ActionListener {
 		this.status=AppStatus.PLAYING;
 		this.setMessage(b?"Voce venceu, parabens!":"Voce perdeu!");
 		this.messageBox.setForeground(b?Color.GREEN:Color.RED);
+		JOptionPane.showMessageDialog(menu,b?"Voce venceu, parabens!":"Voce perdeu!");
 	}
 	
 }
