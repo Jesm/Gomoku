@@ -1,8 +1,11 @@
+import gnu.io.CommPortIdentifier;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentListener;
+import java.util.Enumeration;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -91,7 +94,9 @@ public class App extends JFrame implements ActionListener {
 		this.messageBox.setText(str);
 	}
 	
+
 	private void createGameMenu(){
+		
 		this.menu=new JPanel();
 //		this.menu.setLayout(null);
 		this.menu.setLocation(App.padding, App.padding+App.messageBoxHeight);
@@ -100,6 +105,7 @@ public class App extends JFrame implements ActionListener {
 		String[] com = {"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8"}; 
 		comList = new JComboBox<>(com);
 		this.menu.add(comList);	
+
 		
 //		this.inputCOMPort=new JTextField();
 //		this.inputCOMPort.setColumns(10);
