@@ -5,8 +5,8 @@ import java.util.Enumeration;
 
 public class Com {
 	
-	private String[] portas;
-	private Enumeration listaDePortas;
+	protected String[] portas;
+	protected Enumeration listaDePortas;
 	
 	public Com(){
 		

@@ -97,12 +97,16 @@ public class App extends JFrame implements ActionListener {
 
 	private void createGameMenu(){
 		
+		Com comPortas = new Com();
+		
 		this.menu=new JPanel();
 //		this.menu.setLayout(null);
 		this.menu.setLocation(App.padding, App.padding+App.messageBoxHeight);
 		this.menu.setSize(App.dimension);
 
-		String[] com = {"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8"}; 
+//		String[] com = {"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8"}; 
+		String[] com = comPortas.ObterPortas();
+		System.out.println(com);
 		comList = new JComboBox<>(com);
 		this.menu.add(comList);	
 
