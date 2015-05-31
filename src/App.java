@@ -1,10 +1,14 @@
+import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
+import gnu.io.CommPortOwnershipListener;
+import gnu.io.NoSuchPortException;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentListener;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.swing.JButton;
@@ -105,8 +109,8 @@ public class App extends JFrame implements ActionListener {
 		this.menu.setSize(App.dimension);
 
 //		String[] com = {"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8"}; 
-		String[] com = comPortas.ObterPortas();
-		System.out.println(com);
+//		ArrayList com = comPortas.ObterPortas();
+		String[] com = comPortas.ListarPortas();
 		comList = new JComboBox<>(com);
 		this.menu.add(comList);	
 

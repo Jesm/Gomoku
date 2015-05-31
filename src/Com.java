@@ -1,5 +1,8 @@
 import gnu.io.CommPortIdentifier;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 
 
@@ -7,6 +10,7 @@ public class Com {
 	
 	protected String[] portas;
 	protected Enumeration listaDePortas;
+	ArrayList portasCom;
 	
 	public Com(){
 		
@@ -14,13 +18,15 @@ public class Com {
 	
 	}
 	
-	public String[] ObterPortas(){
+	
+	public ArrayList ObterPortas(){
 		
-		return portas;
+		portasCom = Collections.list(listaDePortas);
+		return portasCom;
 	}
 	
 	
-	public void ListarPortas(){
+	public String[] ListarPortas(){
 		
 		int i = 0;
 		
@@ -31,6 +37,8 @@ public class Com {
 			portas[i] = ips.getName();
 			i++;
 		}
+		
+		return portas;
 	}
 	
 	public boolean PortaExiste (String COMp){
