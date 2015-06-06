@@ -42,10 +42,10 @@ public class App extends JFrame implements ActionListener {
 		int base=(App.boardOrder+1)*(App.rockDiameter+App.rockMargin*2)+App.boardOrder;
 		App.dimension=new Dimension(base, base);
 
-		App.lineColor=new Color(48, 48, 48);
-		App.rockColor=new Color(255, 255, 255, 240);
-		App.hostRockColor=Color.RED;
-		App.guestRockColor=Color.BLUE;
+		App.lineColor=new Color(144, 144, 144);
+		App.rockColor=new Color(144, 144, 144, 240);
+		App.hostRockColor=Color.WHITE;
+		App.guestRockColor=Color.BLACK;
 		
 		new App();
 		new App();
