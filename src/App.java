@@ -1,15 +1,13 @@
-import gnu.io.CommPort;
-import gnu.io.CommPortIdentifier;
-import gnu.io.CommPortOwnershipListener;
 import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.UnsupportedCommOperationException;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
-import java.util.ArrayList;
-import java.util.Enumeration;
+import java.io.IOException;
+import java.util.TooManyListenersException;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,7 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 public class App extends JFrame implements ActionListener {	
 
@@ -53,13 +50,12 @@ public class App extends JFrame implements ActionListener {
 	
 
 	private AppStatus status;
-	private Hub hub;
+	private Com comPort;
 	private AppBoard board;
 	public Color color, opColor;
 	
 	private JLabel messageBox;
 	private JPanel menu;
-//	private JTextField inputCOMPort;
 	private JComboBox<String> comList;
 	private String selectedCom;
 	private JPanel startGame;
@@ -67,10 +63,9 @@ public class App extends JFrame implements ActionListener {
 	
 	public App(){
 		this.status=AppStatus.INITIALIZED;
-		this.hub=Hub.getInstance();
 
 		this.createGameEnvironment();
-		this.setMessage("Insira a porta COM que deseja utilizar");
+		this.displayMessage("Insira a porta COM que deseja utilizar");
 		this.createGameMenu();
 		
 		this.setVisible(true);
@@ -94,31 +89,21 @@ public class App extends JFrame implements ActionListener {
 		this.getContentPane().add(this.messageBox);
 	}
 	
-	private void setMessage(String str){
+	private void displayMessage(String str){
 		this.messageBox.setText(str);
 	}
 	
 
 	private void createGameMenu(){
 		
-		Com comPortas = new Com();
-		
 		this.menu=new JPanel();
-//		this.menu.setLayout(null);
 		this.menu.setLocation(App.padding, App.padding+App.messageBoxHeight);
 		this.menu.setSize(App.dimension);
 
-//		String[] com = {"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8"}; 
-//		ArrayList com = comPortas.ObterPortas();
-		String[] com = comPortas.ListarPortas();
-		comList = new JComboBox<>(com);
-		this.menu.add(comList);	
+		String[] ports = Com.ListarPortas();
+		comList = new JComboBox<String>(ports);
+		this.menu.add(comList);
 
-		
-//		this.inputCOMPort=new JTextField();
-//		this.inputCOMPort.setColumns(10);
-//		this.menu.add(this.inputCOMPort);
-		
 		JButton button=new JButton("Usar porta COM");
 		button.addActionListener(this);
 		this.menu.add(button);
@@ -151,39 +136,60 @@ public class App extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		switch(this.status){
 			case INITIALIZED:
-				this.preparePort();
+				try {
+					this.preparePort();
+				} catch (NoSuchPortException | PortInUseException
+						| UnsupportedCommOperationException | TooManyListenersException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			break;
 			case READY:
-				this.searchGame();
+				try {
+					this.searchGame();
+				} catch (IOException | InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			break;
 			case INVITED:				
-				this.acceptInvite();
+				try {
+					this.acceptInvite();
+				} catch (IOException | InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			break;
+			default:
 			break;
 		}
 	}
 	
-	private void preparePort(){
-//		this.hub.registerPort(this.inputCOMPort.getText(), this);
-		System.out.println(selectedCom);
-		this.hub.registerPort(selectedCom, this);
+	private void preparePort() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, TooManyListenersException{
+		this.comPort=new Com(selectedCom, this);
 		this.status=AppStatus.READY;
 		
 		this.menu.setVisible(false);
 		this.startGame.setVisible(true);
-		this.setMessage("Procure um jogo clicando no botao abaixo ou aguarde um convite");
+		this.displayMessage("Procure um jogo clicando no botao abaixo ou aguarde um convite");
 	}
 	
-	private void sendHubCommand(String str){
-		HubCommand cmd=new HubCommand(str);
-		this.hub.sendCommand(this, cmd);
+	private void sendComCommand(String str) throws IOException, InterruptedException{
+		ComCommand cmd=new ComCommand(str);
+		this.comPort.sendCommand(cmd);
 	}
 	
-	private void searchGame(){
-		this.sendHubCommand("invite");
-		this.setMessage("Foi enviado um pedido de jogo");
+	private void sendComCommand(String str, String arr[]) throws IOException, InterruptedException{
+		ComCommand cmd=new ComCommand(str, arr);
+		this.comPort.sendCommand(cmd);
 	}
 	
-	public void receiveCommand(HubCommand cmd){
+	private void searchGame() throws IOException, InterruptedException{
+		this.sendComCommand("invite");
+		this.displayMessage("Foi enviado um pedido de jogo");
+	}
+	
+	public void receiveCommand(ComCommand cmd){
 		switch(cmd.getName()){
 			case "invite":
 				this.setInvite();
@@ -192,24 +198,23 @@ public class App extends JFrame implements ActionListener {
 				this.getAcceptedInvite();
 			break;
 			case "move":
-				HubMoveCommand tmp=(HubMoveCommand)cmd;
-				this.getOpponentMove(tmp.x, tmp.y);
+				this.getOpponentMove(Integer.parseInt(cmd.args[0]), Integer.parseInt(cmd.args[1]));
 			break;
 		}
 	}
 	
 	public void setInvite(){
 		this.status=AppStatus.INVITED;
-		this.setMessage("Você foi convidado para uma partida! Clique no botao abaixo para jogar");
+		this.displayMessage("Você foi convidado para uma partida! Clique no botao abaixo para jogar");
 	}
 	
-	public void acceptInvite(){
-		this.sendHubCommand("accepted_invite");
+	public void acceptInvite() throws IOException, InterruptedException{
+		this.sendComCommand("accepted_invite");
 		this.status=AppStatus.PLAYING;
 		this.color=App.guestRockColor;
 		this.opColor=App.hostRockColor;
 		this.generateGameBoard();
-		this.setMessage("O jogo comecou! Faca seu primeiro movimento clicando em uma das posicoes abaixo");
+		this.displayMessage("O jogo comecou! Faca seu primeiro movimento clicando em uma das posicoes abaixo");
 	}
 	
 	public void getAcceptedInvite(){
@@ -217,7 +222,7 @@ public class App extends JFrame implements ActionListener {
 		this.color=App.hostRockColor;
 		this.opColor=App.guestRockColor;
 		this.generateGameBoard();
-		this.setMessage("Foi encontrado um jogo! Aguarde pelo movimento de seu oponente");
+		this.displayMessage("Foi encontrado um jogo! Aguarde pelo movimento de seu oponente");
 	}
 
 	private void generateGameBoard(){
@@ -231,9 +236,9 @@ public class App extends JFrame implements ActionListener {
 	}
 	
 	
-	public void getPlayerMove(int x, int y){
-		HubMoveCommand cmd=new HubMoveCommand("move", x, y);
-		this.hub.sendCommand(this, cmd);
+	public void getPlayerMove(Integer x, Integer y) throws IOException, InterruptedException{
+		String[] arr={x.toString(), y.toString()};
+		this.sendComCommand("move", arr);
 		
 		if(this.board.setPlayerRock(x, y, 1)){
 			this.endGame(true);
@@ -241,7 +246,7 @@ public class App extends JFrame implements ActionListener {
 		}
 		
 		this.status=AppStatus.WAITING;
-		this.setMessage("Aguardando jogada do oponente...");
+		this.displayMessage("Aguardando jogada do oponente...");
 	}
 	
 	public void getOpponentMove(int x, int y){
@@ -251,14 +256,20 @@ public class App extends JFrame implements ActionListener {
 		}
 		
 		this.status=AppStatus.PLAYING;
-		this.setMessage("Faca sua jogada");
+		this.displayMessage("Faca sua jogada");
 	}
 	
 	private void endGame(boolean b){
 		this.status=AppStatus.PLAYING;
-		this.setMessage(b?"Voce venceu, parabens!":"Voce perdeu!");
+		this.displayMessage(b?"Voce venceu, parabens!":"Voce perdeu!");
 		this.messageBox.setForeground(b?Color.GREEN:Color.RED);
 		JOptionPane.showMessageDialog(menu,b?"Voce venceu, parabens!":"Voce perdeu!");
+		this.closePort();
+	}
+	
+	private void closePort(){
+		if(this.comPort!=null)
+			this.comPort.close();
 	}
 	
 }

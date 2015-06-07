@@ -3,8 +3,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,7 +145,12 @@ public class AppBoard extends JPanel implements MouseListener{
 			for(int y=0;y<App.boardOrder;y++){
 				AppCircle c=this.boardRepresentation[x][y];
 				if(c.gotClicked(posX, posY)){
-					this.app.getPlayerMove(x, y);
+					try {
+						this.app.getPlayerMove(x, y);
+					} catch (IOException | InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					return;
 				}
 			}
