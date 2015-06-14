@@ -48,8 +48,8 @@ public class App extends JFrame implements ActionListener {
 		App.guestRockColor=Color.BLACK;
 		
 		new App();
-//		new App();
-	}
+		new App();
+}
 	
 
 	private AppStatus status;
@@ -81,6 +81,16 @@ public class App extends JFrame implements ActionListener {
 	private void createGameEnvironment(){
 		this.setTitle("Gomoku");
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+//		Código para fechar porta antes de fechar aplicação
+		App appReference=this;
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    	appReference.closePort();
+		    }
+		});
+		
 		this.setLayout(null);
 		
 		Dimension screenSize=java.awt.Toolkit.getDefaultToolkit().getScreenSize();
