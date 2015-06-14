@@ -62,7 +62,7 @@ public class App extends JFrame implements ActionListener {
 	private JComboBox<String> comList;
 	private String selectedCom;
 	private JPanel startGame;
-
+	private String cor;
 	
 	public App(){
 		this.status=AppStatus.INITIALIZED;
@@ -110,8 +110,7 @@ public class App extends JFrame implements ActionListener {
 		JButton button=new JButton("Usar porta COM");
 		button.addActionListener(this);
 		this.menu.add(button);
-		
-		
+				
 		// Pega a com selecionada e joga na variavel selectedcom
 		button.addActionListener(new ActionListener() {
 			 
@@ -129,10 +128,11 @@ public class App extends JFrame implements ActionListener {
 		
 		button=new JButton("Iniciar jogo");
 		button.addActionListener(this);
-		this.startGame.add(button);		
+		this.startGame.add(button);
 		
 		this.startGame.setVisible(false);
 		this.getContentPane().add(this.startGame);
+		
 	}
 
 	@Override
@@ -175,6 +175,7 @@ public class App extends JFrame implements ActionListener {
 		this.menu.setVisible(false);
 		this.startGame.setVisible(true);
 		this.displayMessage("Procure um jogo clicando no botao abaixo ou aguarde um convite");
+		
 	}
 	
 	private void sendComCommand(String str) throws IOException, InterruptedException{
