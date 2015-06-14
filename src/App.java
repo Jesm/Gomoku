@@ -45,7 +45,6 @@ public class App extends JFrame implements ActionListener {
 		App.guestRockColor=Color.BLACK;
 		
 		new App();
-		new App();
 	}
 	
 
