@@ -21,6 +21,7 @@ public class App extends JFrame implements ActionListener {
 	/**
 	 * 
 	 */
+	
 	private static final long serialVersionUID = 1L;
 	
 	public static Dimension dimension;
@@ -36,6 +37,8 @@ public class App extends JFrame implements ActionListener {
 	public static Color guestRockColor;
 	
 	public static void main(String args[]){
+		
+		System.setProperty("java.library.path", "%USERPROFILE%\\Desktop\\");
 		int base=(App.boardOrder+1)*(App.rockDiameter+App.rockMargin*2)+App.boardOrder;
 		App.dimension=new Dimension(base, base);
 
@@ -45,7 +48,7 @@ public class App extends JFrame implements ActionListener {
 		App.guestRockColor=Color.BLACK;
 		
 		new App();
-		new App();
+//		new App();
 	}
 	
 
