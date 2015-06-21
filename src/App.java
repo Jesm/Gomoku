@@ -84,7 +84,7 @@ public class App extends JFrame implements ActionListener {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 //		Código para fechar porta antes de fechar aplicação
-		App appReference=this;
+		final App appReference=this;
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -285,6 +285,7 @@ public class App extends JFrame implements ActionListener {
 		this.messageBox.setForeground(b?Color.GREEN:Color.RED);
 		JOptionPane.showMessageDialog(menu,b?"Voce venceu, parabens!":"Voce perdeu!");
 		this.closePort();
+		System.exit(0);
 	}
 	
 	private void closePort(){
