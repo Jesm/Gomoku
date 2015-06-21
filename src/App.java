@@ -35,6 +35,7 @@ public class App extends JFrame implements ActionListener {
 	public static Color rockColor;
 	public static Color hostRockColor;
 	public static Color guestRockColor;
+	public static Color boardBgColor;
 	
 	public static void main(String args[]){
 		
@@ -46,10 +47,11 @@ public class App extends JFrame implements ActionListener {
 		App.rockColor=new Color(144, 144, 144, 240);
 		App.hostRockColor=Color.WHITE;
 		App.guestRockColor=Color.BLACK;
+		App.boardBgColor=new Color(208, 208, 208);
 		
 		new App();
-		new App();
-}
+//		new App();
+	}
 	
 
 	private AppStatus status;
@@ -99,7 +101,9 @@ public class App extends JFrame implements ActionListener {
 		
 		this.messageBox=new JLabel();
 		this.messageBox.setBounds(App.padding, App.padding, App.dimension.width, App.messageBoxHeight);
-		this.getContentPane().add(this.messageBox);
+		this.getContentPane().add(this.messageBox);		
+
+		this.getContentPane().setBackground(App.boardBgColor);
 	}
 	
 	private void displayMessage(String str){
@@ -112,6 +116,7 @@ public class App extends JFrame implements ActionListener {
 		this.menu=new JPanel();
 		this.menu.setLocation(App.padding, App.padding+App.messageBoxHeight);
 		this.menu.setSize(App.dimension);
+		this.menu.setOpaque(false);
 
 		String[] ports = Com.ListarPortas();
 		comList = new JComboBox<String>(ports);
@@ -135,6 +140,7 @@ public class App extends JFrame implements ActionListener {
 		this.startGame=new JPanel();
 		this.startGame.setLocation(App.padding, App.padding+App.messageBoxHeight);
 		this.startGame.setSize(App.dimension);
+		this.startGame.setOpaque(false);
 		
 		button=new JButton("Iniciar jogo");
 		button.addActionListener(this);
@@ -244,6 +250,7 @@ public class App extends JFrame implements ActionListener {
 		this.board=new AppBoard(this);
 		this.board.setLocation(App.padding, App.padding+App.messageBoxHeight);
 		this.board.setSize(App.dimension);
+		this.board.setOpaque(false);
 		this.getContentPane().add(this.board);
 		
 		this.startGame.setVisible(false);
