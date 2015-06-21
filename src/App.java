@@ -64,7 +64,6 @@ public class App extends JFrame implements ActionListener {
 	private JComboBox<String> comList;
 	private String selectedCom;
 	private JPanel startGame;
-	private String cor;
 	
 	public App(){
 		this.status=AppStatus.INITIALIZED;
@@ -199,7 +198,7 @@ public class App extends JFrame implements ActionListener {
 		this.comPort.sendCommand(cmd);
 	}
 	
-	private void sendComCommand(String str, String arr[]) throws IOException, InterruptedException{
+	private void sendComCommand(String str, byte arr[]) throws IOException, InterruptedException{
 		ComCommand cmd=new ComCommand(str, arr);
 		this.comPort.sendCommand(cmd);
 	}
@@ -218,7 +217,7 @@ public class App extends JFrame implements ActionListener {
 				this.getAcceptedInvite();
 			break;
 			case "move":
-				this.getOpponentMove(Integer.parseInt(cmd.args[0]), Integer.parseInt(cmd.args[1]));
+				this.getOpponentMove((int)cmd.args[0], (int)cmd.args[1]);
 			break;
 		}
 	}
@@ -258,7 +257,7 @@ public class App extends JFrame implements ActionListener {
 	
 	
 	public void getPlayerMove(Integer x, Integer y) throws IOException, InterruptedException{
-		String[] arr={x.toString(), y.toString()};
+		byte[] arr={ComCommand.reduceToByte(x), ComCommand.reduceToByte(y)};
 		this.sendComCommand("move", arr);
 		
 		if(this.board.setPlayerRock(x, y, 1)){

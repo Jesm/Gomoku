@@ -1,3 +1,4 @@
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -5,7 +6,9 @@ import java.util.Map.Entry;
 public class ComCommand {
 	
 	protected Integer code;
-	public String args[];
+	public byte args[];
+	
+	public static int maxLength=8;
 	
 	public static HashMap<Integer, String> codes;
 	static{
@@ -17,7 +20,7 @@ public class ComCommand {
 	
 	public ComCommand(){
 		this.code=0;
-		this.args=new String[0];
+		this.args=new byte[0];
 	}
 
 	public ComCommand(String name){
@@ -29,21 +32,21 @@ public class ComCommand {
 		}
 	}
 
-	public ComCommand(String name, String arr[]){
+	public ComCommand(String name, byte arr[]){
 		this(name);
 		this.args=arr;
 	}
 
-	public ComCommand(StringBuffer b){
+	public ComCommand(ByteBuffer buffer){
 		this();
 		
-		String[] arr=b.toString().split(" ");
-		this.code=Integer.parseInt(arr[0]);
+		byte byteArr[]=buffer.array();
+		this.code=(int)byteArr[0];
 		
-		if(arr.length>1){
-			this.args=new String[arr.length-1];
-			for(int x=1;x<arr.length;x++)
-				this.args[x-1]=arr[x];
+		if(byteArr.length>1){
+			this.args=new byte[byteArr.length-1];
+			for(int x=1;x<byteArr.length;x++)
+				this.args[x-1]=byteArr[x];
 		}
 	}
 	
@@ -51,13 +54,22 @@ public class ComCommand {
 		return ComCommand.codes.get(this.code);
 	}
 	
-	public String toString(){
-		StringBuilder b=new StringBuilder();
-		b.append(this.code);
+	public byte[] getBytes(){
+		ByteBuffer ret=ByteBuffer.allocate(ComCommand.maxLength);
+		ret.put(ComCommand.reduceToByte(this.code));
 		
-		for(String str:this.args)
-			b.append(" "+str);
+		for(byte b:this.args)
+			ret.put(b);
 		
-		return b.toString();
+		return ret.array();
+	}
+	
+	public static byte reduceToByte(int num){
+		byte arr[]=ByteBuffer.allocate(Integer.BYTES).putInt(num).array();
+//		System.out.println(arr[0]);
+//		System.out.print(arr[1]);
+//		System.out.print(arr[2]);
+//		System.out.print(arr[3]);
+		return arr[3];
 	}
 }

@@ -9,6 +9,7 @@ import gnu.io.UnsupportedCommOperationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.Enumeration; 
 import java.util.TooManyListenersException;
 
@@ -41,7 +42,7 @@ public class Com implements SerialPortEventListener  {
 	
 	public void sendCommand(ComCommand cmd) throws IOException, InterruptedException{
 		OutputStream saida = this.port.getOutputStream();
-		saida.write(cmd.toString().getBytes());
+		saida.write(cmd.getBytes());
 		Thread.sleep(100);
 		saida.flush();
 	}
@@ -66,7 +67,7 @@ public class Com implements SerialPortEventListener  {
 	        break;	
 	        case SerialPortEvent.DATA_AVAILABLE:
 	        	
-	    		StringBuffer buffer=new StringBuffer();
+	        	ByteBuffer buffer=ByteBuffer.allocate(ComCommand.maxLength);
 				InputStream entrada = null;
 				try {
 					entrada = this.port.getInputStream();
@@ -77,12 +78,8 @@ public class Com implements SerialPortEventListener  {
 				
 				int data=-2;
 				while(data!=-1){
-	            	if(data!=-2){
-	            		char c=(char)data;
-		            	if(c=='\r')
-		            		c='\n';
-		            	buffer.append(c);
-	            	}
+	            	if(data!=-2)
+		            	buffer.put((byte)data);
 	                
 	            	try {
 						data = entrada.read();
