@@ -31,6 +31,7 @@ public class App extends JFrame implements ActionListener {
 	public static int boardOrder=19;
 	public static int rockMargin=4;
 	public static int rockDiameter=16;
+	public static int victorySequenceLength=5;
 	public static Color lineColor;
 	public static Color rockColor;
 	public static Color hostRockColor;
@@ -280,11 +281,11 @@ public class App extends JFrame implements ActionListener {
 	}
 	
 	private void endGame(boolean b){
-		this.status=AppStatus.PLAYING;
+		this.status=AppStatus.READY;
 		this.displayMessage(b?"Voce venceu, parabens!":"Voce perdeu!");
 		this.messageBox.setForeground(b?Color.GREEN:Color.RED);
-		JOptionPane.showMessageDialog(menu,b?"Voce venceu, parabens!":"Voce perdeu!");
 		this.closePort();
+		JOptionPane.showMessageDialog(menu, b?"Voce venceu, parabens!":"Voce perdeu!");
 		System.exit(0);
 	}
 	

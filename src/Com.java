@@ -21,15 +21,18 @@ public class Com implements SerialPortEventListener  {
 	protected SerialPort port;
 	
 	public static int timeout=100;
-	public static int baudrate=10;
+	public static int baudrate=9600;
+	
+//	Documentação:
+//	http://docs.oracle.com/cd/E17802_01/products/products/javacomm/reference/api/javax/comm/package-summary.html
 	
 	public Com(String str, App a) throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, TooManyListenersException{
 		this.app=a;
 		this.name=str;
 		CommPortIdentifier id=CommPortIdentifier.getPortIdentifier(str);
 		
-		this.port = (SerialPort) id.open("Com", timeout);	
-		this.port.setSerialPortParams(baudrate, this.port.DATABITS_8, this.port.STOPBITS_1, this.port.PARITY_NONE);
+		this.port = (SerialPort) id.open("Gomoku", timeout);	
+//		this.port.setSerialPortParams(baudrate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 		this.port.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
 		
 		this.listen();

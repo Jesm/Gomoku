@@ -55,7 +55,7 @@ public class AppBoard extends JPanel implements MouseListener{
 		for(int x=0;x<sequences.length;x++){
 			int v[]=sequences[x];
 			List<AppCircle> circles=this.verifyRockSequence(c, v[0], v[1]);
-			if(circles.size()==5)
+			if(circles.size()==App.victorySequenceLength)
 				return true;
 		}
 		
